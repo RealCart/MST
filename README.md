@@ -161,3 +161,9 @@ Below is a concise analysis based on your `output.json`. Times are shown in **mi
 - **Streaming/growing scenarios:** Prim is convenient when you gradually expand the tree.
 - Always benchmark on **your real graph density**; constants and memory layout matter.
 
+
+
+<img width="1979" height="1180" alt="output (1)" src="https://github.com/user-attachments/assets/45c0dc65-be4b-4f98-8a79-62df62d225b8" />
+<img width="1979" height="1180" alt="output" src="https://github.com/user-attachments/assets/6218c075-f282-4187-b0c4-604a3a110285" />
+
+
