@@ -118,4 +118,69 @@ public class Graph {
         result.executionTimeMs = Math.round((endTime - startTime) / 1e4) / 100.0;
         return result;
     }
+
+    public MSTResult computeKruskalMST() {
+        MSTResult result = new MSTResult();
+        result.mstEdges = new ArrayList<>();
+        result.totalCost = 0;
+        long ops = 0;
+        long compOps = 0;
+
+        Edge[] edgeArray = edges.toArray(new Edge[0]);
+        // Custom sort to count comparisons
+        compOps = 0;
+        Arrays.sort(edgeArray, (e1, e2) -> {
+            compOps++;
+            return Integer.compare(e1.weight, e2.weight);
+        });
+
+        int n = nodes.size();
+        int[] parent = new int[n];
+        int[] rank = new int[n];
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;
+            rank[i] = 0;
+        }
+        class UF {
+            int find(int x) {
+                ops++;
+                if (parent[x] != x) {
+                    parent[x] = find(parent[x]);
+                }
+                return parent[x];
+            }
+            void union(int x, int y) {
+                if (rank[x] < rank[y]) {
+                    parent[x] = y;
+                } else if (rank[y] < rank[x]) {
+                    parent[y] = x;
+                } else {
+                    parent[y] = x;
+                    rank[x]++;
+                }
+            }
+        }
+        UF uf = new UF();
+
+        long startTime = System.nanoTime();
+        for (Edge edge : edgeArray) {
+            int u = nodeIndex.get(edge.from);
+            int v = nodeIndex.get(edge.to);
+            int rootU = uf.find(u);
+            int rootV = uf.find(v);
+            ops++;
+            if (rootU != rootV) {
+                uf.union(rootU, rootV);
+                ops++;
+                result.mstEdges.add(edge);
+                result.totalCost += edge.weight;
+            }
+        }
+        long endTime = System.nanoTime();
+
+        Collections.sort(result.mstEdges);
+        result.operationsCount = ops + compOps;
+        result.executionTimeMs = Math.round((endTime - startTime) / 1e4) / 100.0;
+        return result;
+    }
 }
