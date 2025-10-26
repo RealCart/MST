@@ -8,12 +8,12 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    static class GraphInput {
+    public static class GraphInput {
         public int id;
         public List<String> nodes;
         public List<EdgeInput> edges;
     }
-    static class EdgeInput {
+    public static class EdgeInput {
         public String from; public String to; public int weight;
         public EdgeInput(String f, String t, int w) { this.from=f; this.to=t; this.weight=w; }
     }
@@ -39,10 +39,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
-        String inputFile = "input.json";
-        if (args.length > 0) {
-            inputFile = args[0];
-        }
+        String inputFile = args.length > 0 ? args[0] : "/Users/bexultan/IdeaProjects/Trees/src/main/java/input.json";
         Gson gson = new Gson();
         try (Reader reader = new FileReader(inputFile)) {
             InputData data = gson.fromJson(reader, InputData.class);

@@ -1,5 +1,7 @@
 package main.java.model_classes;
 
+import main.java.Main;
+
 import java.util.*;
 
 public class Graph {
@@ -20,9 +22,9 @@ public class Graph {
         }
     }
 
-    public Graph(List<String> nodes, List<GraphInput.EdgeInput> edgeList) {
+    public Graph(List<String> nodes, List<Main.EdgeInput> edgeList) {
         this(nodes);
-        for (GraphInput.EdgeInput e : edgeList) {
+        for (Main.EdgeInput e : edgeList) {
             addEdge(e.from, e.to, e.weight);
         }
     }
@@ -54,13 +56,11 @@ public class Graph {
         result.mstEdges = new ArrayList<>();
         result.totalCost = 0;
         long ops = 0;
-        long compOps = 0;
+        final long[] compOps = {0};
 
-        Comparator<Edge> comp = new Comparator<>() {
-            public int compare(Edge e1, Edge e2) {
-                compOps++;
-                return Integer.compare(e1.weight, e2.weight);
-            }
+        Comparator<Edge> comp = (e1, e2) -> {
+            compOps[0]++;
+            return Integer.compare(e1.weight, e2.weight);
         };
         PriorityQueue<Edge> pq = new PriorityQueue<>(comp);
 
@@ -114,7 +114,7 @@ public class Graph {
         long endTime = System.nanoTime();
 
         Collections.sort(result.mstEdges);
-        result.operationsCount = ops + compOps;
+        result.operationsCount = ops + compOps[0];
         result.executionTimeMs = Math.round((endTime - startTime) / 1e4) / 100.0;
         return result;
     }
@@ -123,14 +123,13 @@ public class Graph {
         MSTResult result = new MSTResult();
         result.mstEdges = new ArrayList<>();
         result.totalCost = 0;
-        long ops = 0;
-        long compOps = 0;
+        final long[] ops = {0};
+        final long[] compOps = {0};
 
         Edge[] edgeArray = edges.toArray(new Edge[0]);
-        // Custom sort to count comparisons
-        compOps = 0;
+        compOps[0] = 0;
         Arrays.sort(edgeArray, (e1, e2) -> {
-            compOps++;
+            compOps[0]++;
             return Integer.compare(e1.weight, e2.weight);
         });
 
@@ -143,7 +142,7 @@ public class Graph {
         }
         class UF {
             int find(int x) {
-                ops++;
+                ops[0]++;
                 if (parent[x] != x) {
                     parent[x] = find(parent[x]);
                 }
@@ -168,10 +167,10 @@ public class Graph {
             int v = nodeIndex.get(edge.to);
             int rootU = uf.find(u);
             int rootV = uf.find(v);
-            ops++;
+            ops[0]++;
             if (rootU != rootV) {
                 uf.union(rootU, rootV);
-                ops++;
+                ops[0]++;
                 result.mstEdges.add(edge);
                 result.totalCost += edge.weight;
             }
@@ -179,7 +178,7 @@ public class Graph {
         long endTime = System.nanoTime();
 
         Collections.sort(result.mstEdges);
-        result.operationsCount = ops + compOps;
+        result.operationsCount = ops[0] + compOps[0];
         result.executionTimeMs = Math.round((endTime - startTime) / 1e4) / 100.0;
         return result;
     }
